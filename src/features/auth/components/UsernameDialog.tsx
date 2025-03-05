@@ -43,7 +43,7 @@ export function UsernameDialog({
         <AlertDialogFooter>
           <AlertDialogAction
             onClick={onClose}
-            className="bg-purple-primary hover:bg-purple-dark"
+            className="bg-purple-primary hover:bg-purple-dark cursor-pointer transition"
           >
             Entendi, vamos começar!
           </AlertDialogAction>
