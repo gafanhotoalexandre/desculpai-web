@@ -3,6 +3,7 @@ import { AuthPage } from './features/auth/pages/AuthPage'
 import { ExcusePage as HomePage } from './features/excuse-generator/pages/ExcusePage'
 import { NotFoundPage } from './features/not-found/pages/NotFound'
 import Layout from './components/common/Layout'
+import { Toaster } from './components/ui/sonner'
 
 export default function App() {
   return (
@@ -14,6 +15,8 @@ export default function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
+
+      <Toaster richColors />
     </>
   )
 }
