@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import { Button } from '@/components/ui/button'
 
 export function HeroSection() {
   return (
@@ -11,12 +11,15 @@ export function HeroSection() {
         Gere pedidos de desculpa convincentes e personalizadas com IA para
         qualquer situação. Digite o contexto, escolha a categoria e pronto!
       </p>
-      <Link
-        to="/generator"
-        className="px-6 py-3 rounded-lg font-medium transition-colors duration-200 font-inter bg-purple-primary text-white hover:bg-purple-dark text-lg inline-block"
+      <Button
+        onClick={() =>
+          document.getElementById('generator-section')?.scrollIntoView()
+        }
+        id="generator-section"
+        className="px-6 py-6 rounded-md font-inter font-medium transition-colors duration-200 cursor-pointer bg-purple-primary text-white hover:bg-purple-dark text-lg"
       >
         Gerar Minha Desculpa
-      </Link>
+      </Button>
     </section>
   )
 }
