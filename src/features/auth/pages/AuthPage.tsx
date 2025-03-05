@@ -58,7 +58,7 @@ export function AuthPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-md">
+    <div className="container mx-auto px-4 pt-12 max-w-md">
       <Card className="w-full">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
@@ -71,8 +71,12 @@ export function AuthPage() {
         <CardContent>
           <Tabs value={activeTab} onValueChange={handleTabChange}>
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Entrar</TabsTrigger>
-              <TabsTrigger value="register">Cadastrar</TabsTrigger>
+              <TabsTrigger className="cursor-pointer" value="login">
+                Entrar
+              </TabsTrigger>
+              <TabsTrigger className="cursor-pointer" value="register">
+                Cadastrar
+              </TabsTrigger>
             </TabsList>
 
             {/* Tab de Login */}
