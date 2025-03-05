@@ -130,8 +130,12 @@
   }
 
   body {
-    @apply bg-background font-inter text-gray-dark bg-gray-light;
+    @apply font-inter text-gray-dark bg-gray-light;
   }
 
 
+}
+
+a.active {
+  @apply text-purple-dark
 }
