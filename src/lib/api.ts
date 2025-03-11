@@ -25,8 +25,12 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      window.location.href = '/auth'
+      const isAuthRoute = window.location.pathname.includes('/auth')
+      // Só redireciona se NÃO estiver na rota de autenticação
+      if (!isAuthRoute) {
+        localStorage.removeItem('token')
+        window.location.href = '/auth'
+      }
     }
 
     const errorData = error.response?.data || {

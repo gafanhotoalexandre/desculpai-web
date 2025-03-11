@@ -167,8 +167,8 @@ export const handlers = [
             success: false,
             message: 'Usuário ou senha inválidos',
           },
-          // 404 pois se for "401", o reponse interceptor da api redireciona a page
-          { status: 404 }
+          // problema corrigido
+          { status: 401 }
         )
       }
 
