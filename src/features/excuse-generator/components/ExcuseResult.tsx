@@ -37,7 +37,7 @@ export function ExcuseResult() {
   }
 
   return (
-    <Card className="text-gray-dark">
+    <Card className="text-gray-dark w-full">
       <CardHeader>
         <CardTitle className="font-poppins">Resultado</CardTitle>
       </CardHeader>
@@ -47,19 +47,21 @@ export function ExcuseResult() {
             value={desculpaGerada}
             onChange={(e) => setDesculpaGerada(e.target.value)}
             placeholder="Edite sua desculpa"
-            className="mb-4"
+            className="mb-4 w-full"
+            rows={5}
           />
         ) : (
           <Textarea
             value={desculpaGerada}
             readOnly
             placeholder="Sua desculpa aparecerá aqui"
-            className="mb-4"
+            className="mb-4 w-full"
+            rows={5}
           />
         )}
       </CardContent>
 
-      <CardFooter className="mt-auto justify-between items-center">
+      <CardFooter className="mt-auto flex-col sm:flex-row gap-4 sm:gap-0 sm:justify-between w-full">
         <div className="flex items-center space-x-3 text-sm text-gray-medium">
           {categoriaSelecionada && (
             <>
@@ -72,15 +74,17 @@ export function ExcuseResult() {
           )}
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
           {!isEditing && (
             <Button
               variant="secondary"
               onClick={handleEditExcuse}
               disabled={!desculpaGerada}
               className="flex items-center gap-2"
+              size="sm"
             >
-              <Edit size={16} /> Editar
+              <Edit size={16} />
+              <span className="sm:inline">Editar</span>
             </Button>
           )}
 
@@ -89,14 +93,17 @@ export function ExcuseResult() {
             onClick={handleCopyExcuse}
             disabled={!desculpaGerada}
             className="flex items-center gap-2"
+            size="sm"
           >
             {isCopied ? (
               <>
-                <Check size={16} className="text-green-500" /> Copiado
+                <Check size={16} className="text-green-500" />
+                <span className="sm:inline">Copiado</span>
               </>
             ) : (
               <>
-                <ClipboardCopy size={16} /> Copiar
+                <ClipboardCopy size={16} />
+                <span className="sm:inline">Copiar</span>
               </>
             )}
           </Button>
@@ -105,8 +112,10 @@ export function ExcuseResult() {
             className="bg-purple-primary hover:bg-purple-dark flex items-center gap-2"
             onClick={handleSave}
             disabled={!desculpaGerada}
+            size="sm"
           >
-            <Save size={16} /> Salvar
+            <Save size={16} />
+            <span className="sm:inline">Salvar</span>
           </Button>
         </div>
       </CardFooter>
