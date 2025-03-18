@@ -11,10 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Desculpa } from "@/types/api";
-import { 
+import {
   obterMinhasDesculpas,
   editarDesculpa,
-  excluirDesculpa
+  excluirDesculpa,
 } from "@/services/excuseService";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -26,20 +26,20 @@ const ProfilePage = () => {
   const { user, isAuthenticated } = useAuthStore();
   const navigate = useNavigate();
   const dataFormatada = formatDate(user?.dataCriacao);
-  
+
   // Estados para gerenciar as desculpas
   const [minhasDesculpas, setMinhasDesculpas] = useState<Desculpa[]>([]);
   const [isDesculpasLoaded, setIsDesculpasLoaded] = useState(false); // uso exclusivo para "ver minhas desculpas"
   const [isLoading, setIsLoading] = useState(false); // loading de uso geral
   const [mostrarDesculpas, setMostrarDesculpas] = useState(false);
-  
+
   // Estados para edição de desculpa
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [textoEditado, setTextoEditado] = useState("");
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/auth');
+      navigate("/auth");
     }
   }, [isAuthenticated, navigate]);
 
@@ -48,6 +48,7 @@ const ProfilePage = () => {
     try {
       setIsLoading(true);
       const desculpas = await obterMinhasDesculpas();
+      console.log(desculpas);
       setMinhasDesculpas(desculpas);
       setIsDesculpasLoaded(true);
       setMostrarDesculpas(true);
@@ -62,29 +63,37 @@ const ProfilePage = () => {
   // TODO: implemente a função para iniciar a edição de uma desculpa
   // Esta função deve receber uma desculpa e configurar o estado de edição
   const iniciarEdicao = (desculpa: Desculpa) => {
-    // implementação
+    setEditandoId(desculpa.id);
+    setTextoEditado(desculpa.texto)
   };
 
   // TODO: implemente a função para cancelar a edição
   // Esta função deve limpar os estados de edição
   const cancelarEdicao = () => {
-    // implementação
+    setEditandoId(null);
   };
 
+  
   // TODO: implemente a função para salvar a edição de uma desculpa
   // Esta função deve chamar a API e atualizar o estado local
   const salvarEdicao = async (id: string) => {
-    // implementação
+    const data = await editarDesculpa(id, textoEditado)
+    console.log(data)
+    console.log(textoEditado)
+    setEditandoId(null)
   };
 
   // TODO: implemente a função para excluir uma desculpa
   // Esta função deve confirmar com o usuário, chamar a API e atualizar o estado local
   const excluirMinhaDesculpa = async (id: string) => {
+    await excluirDesculpa(id)
     // implementação
   };
 
   // Calcula quantas desculpas têm mais de 5 votos (favoritas)
-  const desculpasFavoritas = minhasDesculpas.filter(d => d.contadorVotos > 5).length;
+  const desculpasFavoritas = minhasDesculpas.filter(
+    (d) => d.contadorVotos > 5
+  ).length;
 
   return (
     <section className="bg-white drop-shadow-md max-w-5xl rounded-md h-full p-4 sm:p-6 my-6 sm:my-10 mx-auto">
@@ -99,11 +108,20 @@ const ProfilePage = () => {
             <h1 className="w-full font-bold text-xl sm:text-2xl md:text-3xl mb-1">
               @{user?.username}
             </h1>
-            <p className="text-gray-500 text-sm sm:text-base">Membro desde: {dataFormatada}</p>
+            <p className="text-gray-500 text-sm sm:text-base">
+              Membro desde: {dataFormatada}
+            </p>
             {user?.email ? (
-              <p className="text-gray-500 text-sm sm:text-base">{user?.email}</p>
+              <p className="text-gray-500 text-sm sm:text-base">
+                {user?.email}
+              </p>
             ) : (
-              <p className="text-gray-500 italic opacity-50 cursor-not-allowed text-sm sm:text-base" title='Implementação em versões futuras'>Email não cadastrado</p>
+              <p
+                className="text-gray-500 italic opacity-50 cursor-not-allowed text-sm sm:text-base"
+                title="Implementação em versões futuras"
+              >
+                Email não cadastrado
+              </p>
             )}
           </div>
         </div>
@@ -115,7 +133,7 @@ const ProfilePage = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={carregarDesculpas}>
-              <Button 
+              <Button
                 variant="outline"
                 className="border border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 w-full"
                 disabled={isLoading}
@@ -124,7 +142,7 @@ const ProfilePage = () => {
               </Button>
             </DropdownMenuItem>
             <DropdownMenuItem title="Em breve: adicione um email para alteração de senha">
-              <Button 
+              <Button
                 variant="outline"
                 className="border border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 w-full"
                 disabled={true}
@@ -136,21 +154,29 @@ const ProfilePage = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
+
       {/* Estatísticas */}
       <hr className="my-4 sm:my-6" />
       <div className="flex flex-col sm:flex-row justify-around items-center gap-4 sm:gap-10 mb-6 sm:mb-8">
-        <Statistic info="Desculpas" qtd={isDesculpasLoaded ? minhasDesculpas.length : '---'} />
-        <Statistic info="Desculpas Favoritas" qtd={isDesculpasLoaded ? desculpasFavoritas : '---'} />
+        <Statistic
+          info="Desculpas"
+          qtd={isDesculpasLoaded ? minhasDesculpas.length : "---"}
+        />
+        <Statistic
+          info="Desculpas Favoritas"
+          qtd={isDesculpasLoaded ? desculpasFavoritas : "---"}
+        />
       </div>
-      
+
       {/* Seção de Desculpas */}
       {mostrarDesculpas && (
         <div className="mt-6 sm:mt-8">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-800">Minhas Desculpas</h2>
-            <Button 
-              variant="ghost" 
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800">
+              Minhas Desculpas
+            </h2>
+            <Button
+              variant="ghost"
               size="sm"
               onClick={() => setMostrarDesculpas(false)}
               className="text-gray-500 hover:text-gray-700"
@@ -158,7 +184,7 @@ const ProfilePage = () => {
               <X size={18} />
             </Button>
           </div>
-          
+
           {minhasDesculpas.length === 0 ? (
             <p className="text-center py-4 sm:py-6 text-gray-500 text-sm sm:text-base">
               Você ainda não criou nenhuma desculpa. Que tal criar uma agora?
@@ -166,8 +192,8 @@ const ProfilePage = () => {
           ) : (
             <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2">
               {minhasDesculpas.map((desculpa) => (
-                <div 
-                  key={desculpa.id} 
+                <div
+                  key={desculpa.id}
                   className="border border-gray-100 rounded-lg p-3 sm:p-4 hover:border-purple-200 hover:bg-purple-50/30 transition-colors"
                 >
                   {/* TODO: implemente o código condicional aqui para:
@@ -176,17 +202,45 @@ const ProfilePage = () => {
                       
                       Use o operador ternário (condição ? resultadoSeVerdadeiro : resultadoSeFalso)
                   */}
-                  
+
                   {/* Este é o código base para o modo de visualização que você deve completar: */}
-                  <p className="mb-3 sm:mb-4 text-gray-700 text-sm sm:text-base">{desculpa.texto}</p>
+                  {editandoId === desculpa.id ? (
+                    <>
+                      <Textarea
+                        value={textoEditado}
+                        onChange={({ target }) => setTextoEditado(target.value)}
+                      />
+                      <Button
+                        onClick={() => salvarEdicao(desculpa.id)}
+                        className="my-2 mr-2 bg-green-600 hover:bg-green-700"
+                      >
+                        Salvar
+                      </Button>
+                      <Button
+                        onClick={() => cancelarEdicao()}
+                        className="my-2 bg-red-600 hover:bg-red-700"
+                      >
+                        Cancelar
+                      </Button>
+                    </>
+                  ) : (
+                    <p className="mb-3 sm:mb-4 text-gray-700 text-sm sm:text-base">
+                      {desculpa.texto}
+                    </p>
+                  )}
                   <div className="flex flex-wrap justify-between items-center gap-2">
                     <Badge className="bg-purple-dark hover:bg-purple-primary transition text-xs sm:text-sm">
                       {desculpa.categoria}
                     </Badge>
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div className="flex items-center gap-1">
-                        <Heart size={16} className="text-purple-primary fill-current sm:size-5" />
-                        <span className="text-gray-600 text-sm">{desculpa.contadorVotos}</span>
+                        <Heart
+                          size={16}
+                          className="text-purple-primary fill-current sm:size-5"
+                        />
+                        <span className="text-gray-600 text-sm">
+                          {desculpa.contadorVotos}
+                        </span>
                       </div>
                       <button
                         onClick={() => iniciarEdicao(desculpa)}
@@ -200,7 +254,7 @@ const ProfilePage = () => {
                         className="text-red-500 hover:text-red-700 cursor-pointer"
                         title="Excluir desculpa"
                       >
-                        <FileX size={14} className="sm:size-4" />
+                        <FileX onClick={() => excluirMinhaDesculpa(desculpa.id)} size={14} className="sm:size-4" />
                       </button>
                     </div>
                   </div>
