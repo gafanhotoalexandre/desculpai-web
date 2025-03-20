@@ -48,7 +48,7 @@ const ProfilePage = () => {
     try {
       setIsLoading(true);
       const desculpas = await obterMinhasDesculpas();
-      console.log(desculpas);
+      console.log(desculpas)
       setMinhasDesculpas(desculpas);
       setIsDesculpasLoaded(true);
       setMostrarDesculpas(true);
@@ -60,34 +60,57 @@ const ProfilePage = () => {
     }
   };
 
-  // TODO: implemente a função para iniciar a edição de uma desculpa
-  // Esta função deve receber uma desculpa e configurar o estado de edição
+  // Função para iniciar a edição de uma desculpa
   const iniciarEdicao = (desculpa: Desculpa) => {
     setEditandoId(desculpa.id);
-    setTextoEditado(desculpa.texto)
+    setTextoEditado(desculpa.texto);
   };
 
-  // TODO: implemente a função para cancelar a edição
-  // Esta função deve limpar os estados de edição
+  // Função para cancelar a edição
   const cancelarEdicao = () => {
     setEditandoId(null);
+    setTextoEditado("");
   };
 
-  
-  // TODO: implemente a função para salvar a edição de uma desculpa
-  // Esta função deve chamar a API e atualizar o estado local
+  // Função para salvar a edição de uma desculpa
   const salvarEdicao = async (id: string) => {
-    const data = await editarDesculpa(id, textoEditado)
-    console.log(data)
-    console.log(textoEditado)
-    setEditandoId(null)
+    try {
+      setIsLoading(true);
+      const desculpaAtualizada = await editarDesculpa(id, textoEditado);
+      
+      // Atualiza a lista de desculpas com a versão editada
+      setMinhasDesculpas(prevDesculpas => 
+        prevDesculpas.map(d => d.id === id ? desculpaAtualizada : d)
+      );
+      
+      toast.success("Desculpa atualizada com sucesso!");
+      setEditandoId(null);
+    } catch (error) {
+      console.error("Erro ao editar desculpa:", error);
+      toast.error("Não foi possível editar a desculpa. Tente novamente.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // TODO: implemente a função para excluir uma desculpa
-  // Esta função deve confirmar com o usuário, chamar a API e atualizar o estado local
+  // Função para excluir uma desculpa
   const excluirMinhaDesculpa = async (id: string) => {
-    await excluirDesculpa(id)
-    // implementação
+    if (window.confirm("Tem certeza que deseja excluir esta desculpa?")) {
+      try {
+        setIsLoading(true);
+        await excluirDesculpa(id);
+        
+        // Remove a desculpa da lista
+        setMinhasDesculpas(prevDesculpas => prevDesculpas.filter(d => d.id !== id));
+        
+        toast.success("Desculpa excluída com sucesso!");
+      } catch (error) {
+        console.error("Erro ao excluir desculpa:", error);
+        toast.error("Não foi possível excluir a desculpa. Tente novamente.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   // Calcula quantas desculpas têm mais de 5 votos (favoritas)
@@ -194,70 +217,75 @@ const ProfilePage = () => {
               {minhasDesculpas.map((desculpa) => (
                 <div
                   key={desculpa.id}
-                  className="border border-gray-100 rounded-lg p-3 sm:p-4 hover:border-purple-200 hover:bg-purple-50/30 transition-colors"
+                  className="border border-gray-100 rounded-lg p-3 sm:p-4 hover:border-purple-200 hover:bg-purple-50/30 transition-colors flex flex-col"
                 >
-                  {/* TODO: implemente o código condicional aqui para:
-                      1. Mostrar a interface de edição quando editandoId === desculpa.id
-                      2. Mostrar o modo de visualização normal caso contrário 
-                      
-                      Use o operador ternário (condição ? resultadoSeVerdadeiro : resultadoSeFalso)
-                  */}
-
-                  {/* Este é o código base para o modo de visualização que você deve completar: */}
                   {editandoId === desculpa.id ? (
-                    <>
+                    // Modo de edição
+                    <div className="space-y-3">
                       <Textarea
                         value={textoEditado}
-                        onChange={({ target }) => setTextoEditado(target.value)}
+                        onChange={(e) => setTextoEditado(e.target.value)}
+                        className="w-full resize-none"
+                        rows={3}
                       />
-                      <Button
-                        onClick={() => salvarEdicao(desculpa.id)}
-                        className="my-2 mr-2 bg-green-600 hover:bg-green-700"
-                      >
-                        Salvar
-                      </Button>
-                      <Button
-                        onClick={() => cancelarEdicao()}
-                        className="my-2 bg-red-600 hover:bg-red-700"
-                      >
-                        Cancelar
-                      </Button>
-                    </>
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={cancelarEdicao}
+                          className="text-gray-500"
+                        >
+                          Cancelar
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={() => salvarEdicao(desculpa.id)}
+                          className="bg-purple-600 text-white hover:bg-purple-700"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Salvando..." : "Salvar"}
+                        </Button>
+                      </div>
+                    </div>
                   ) : (
+                    // Modo de visualização
                     <p className="mb-3 sm:mb-4 text-gray-700 text-sm sm:text-base">
                       {desculpa.texto}
                     </p>
                   )}
-                  <div className="flex flex-wrap justify-between items-center gap-2">
-                    <Badge className="bg-purple-dark hover:bg-purple-primary transition text-xs sm:text-sm">
-                      {desculpa.categoria}
-                    </Badge>
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div className="flex items-center gap-1">
-                        <Heart
-                          size={16}
-                          className="text-purple-primary fill-current sm:size-5"
-                        />
-                        <span className="text-gray-600 text-sm">
-                          {desculpa.contadorVotos}
-                        </span>
+                  
+                  {editandoId !== desculpa.id && (
+                    <div className="mt-auto flex flex-wrap justify-between items-center gap-2">
+                      <Badge className="bg-purple-dark hover:bg-purple-primary transition text-xs sm:text-sm">
+                        {desculpa.categoria}
+                      </Badge>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="flex items-center gap-1">
+                          <Heart
+                            size={16}
+                            className="text-purple-primary fill-current sm:size-5"
+                          />
+                          <span className="text-gray-600 text-sm">
+                            {desculpa.contadorVotos}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => iniciarEdicao(desculpa)}
+                          className="text-purple-primary hover:text-purple-dark cursor-pointer"
+                          title="Editar desculpa"
+                        >
+                          <Edit2 size={14} className="sm:size-4" />
+                        </button>
+                        <button
+                          onClick={() => excluirMinhaDesculpa(desculpa.id)}
+                          className="text-red-500 hover:text-red-700 cursor-pointer"
+                          title="Excluir desculpa"
+                        >
+                          <FileX size={14} className="sm:size-4" />
+                        </button>
                       </div>
-                      <button
-                        onClick={() => iniciarEdicao(desculpa)}
-                        className="text-purple-primary hover:text-purple-dark cursor-pointer"
-                        title="Editar desculpa"
-                      >
-                        <Edit2 size={14} className="sm:size-4" />
-                      </button>
-                      <button
-                        onClick={() => excluirMinhaDesculpa(desculpa.id)}
-                        className="text-red-500 hover:text-red-700 cursor-pointer"
-                        title="Excluir desculpa"
-                      >
-                        <FileX onClick={() => excluirMinhaDesculpa(desculpa.id)} size={14} className="sm:size-4" />
-                      </button>
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>
