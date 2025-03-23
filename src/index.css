@@ -139,3 +139,7 @@
 a.active {
   @apply text-purple-dark
 }
+
+button {
+  @apply cursor-pointer transition
+}
