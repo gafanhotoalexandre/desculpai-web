@@ -10,6 +10,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Desculpa } from "@/types/api";
 import {
   obterMinhasDesculpas,
@@ -36,6 +46,10 @@ const ProfilePage = () => {
   // Estados para edição de desculpa
   const [editandoId, setEditandoId] = useState<string | null>(null);
   const [textoEditado, setTextoEditado] = useState("");
+
+  // Estado para controlar o AlertDialog de exclusão
+  const [desculpaParaExcluir, setDesculpaParaExcluir] = useState<string | null>(null);
+  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -93,15 +107,23 @@ const ProfilePage = () => {
     }
   };
 
-  // Função para excluir uma desculpa
-  const excluirMinhaDesculpa = async (id: string) => {
-    if (window.confirm("Tem certeza que deseja excluir esta desculpa?")) {
+  // Função para preparar exclusão (abre o dialog)
+  const prepararExclusao = (id: string) => {
+    setDesculpaParaExcluir(id);
+    setAlertDialogOpen(true);
+  };
+
+  // Função para excluir uma desculpa (chamada após confirmação)
+  const confirmarExclusao = async () => {
+    if (desculpaParaExcluir) {
       try {
         setIsLoading(true);
-        await excluirDesculpa(id);
+        await excluirDesculpa(desculpaParaExcluir);
         
         // Remove a desculpa da lista
-        setMinhasDesculpas(prevDesculpas => prevDesculpas.filter(d => d.id !== id));
+        setMinhasDesculpas(prevDesculpas => 
+          prevDesculpas.filter(d => d.id !== desculpaParaExcluir)
+        );
         
         toast.success("Desculpa excluída com sucesso!");
       } catch (error) {
@@ -109,6 +131,8 @@ const ProfilePage = () => {
         toast.error("Não foi possível excluir a desculpa. Tente novamente.");
       } finally {
         setIsLoading(false);
+        setDesculpaParaExcluir(null);
+        setAlertDialogOpen(false);
       }
     }
   };
@@ -150,15 +174,15 @@ const ProfilePage = () => {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="p-2 hover:bg-gray-100 rounded-full mt-2 sm:mt-0">
-              <EllipsisVertical className="cursor-pointer" size={24} />
+            <button className="p-2 hover:bg-purple-50 rounded-full mt-2 sm:mt-0">
+              <EllipsisVertical className="cursor-pointer text-purple-primary" size={24} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={carregarDesculpas}>
               <Button
                 variant="outline"
-                className="border border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 w-full"
+                className="border border-purple-primary text-purple-primary hover:bg-purple-50 hover:text-purple-dark w-full"
                 disabled={isLoading}
               >
                 {isLoading ? "Carregando..." : "Ver Minhas Desculpas"}
@@ -167,7 +191,7 @@ const ProfilePage = () => {
             <DropdownMenuItem title="Em breve: adicione um email para alteração de senha">
               <Button
                 variant="outline"
-                className="border border-purple-400 text-purple-600 hover:bg-purple-50 hover:text-purple-700 w-full"
+                className="border border-purple-primary text-purple-primary hover:bg-purple-50 hover:text-purple-dark w-full"
                 disabled={true}
                 title="Em breve: adicione um email para alteração de senha"
               >
@@ -202,7 +226,7 @@ const ProfilePage = () => {
               variant="ghost"
               size="sm"
               onClick={() => setMostrarDesculpas(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-purple-dark"
             >
               <X size={18} />
             </Button>
@@ -233,14 +257,14 @@ const ProfilePage = () => {
                           variant="outline" 
                           size="sm"
                           onClick={cancelarEdicao}
-                          className="text-gray-500"
+                          className="border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                         >
                           Cancelar
                         </Button>
                         <Button 
                           size="sm"
                           onClick={() => salvarEdicao(desculpa.id)}
-                          className="bg-purple-600 text-white hover:bg-purple-700"
+                          className="bg-purple-primary text-white hover:bg-purple-dark"
                           disabled={isLoading}
                         >
                           {isLoading ? "Salvando..." : "Salvar"}
@@ -277,8 +301,8 @@ const ProfilePage = () => {
                           <Edit2 size={14} className="sm:size-4" />
                         </button>
                         <button
-                          onClick={() => excluirMinhaDesculpa(desculpa.id)}
-                          className="text-red-500 hover:text-red-700 cursor-pointer"
+                          onClick={() => prepararExclusao(desculpa.id)}
+                          className="text-purple-primary hover:text-purple-dark cursor-pointer"
                           title="Excluir desculpa"
                         >
                           <FileX size={14} className="sm:size-4" />
@@ -292,6 +316,28 @@ const ProfilePage = () => {
           )}
         </div>
       )}
+
+      {/* AlertDialog para confirmação de exclusão */}
+      <AlertDialog open={alertDialogOpen} onOpenChange={setAlertDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir desculpa</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta desculpa? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="border border-gray-200 hover:bg-gray-50">Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmarExclusao}
+              className="bg-purple-dark text-white hover:bg-purple-primary"
+              disabled={isLoading}
+            >
+              {isLoading ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 };
