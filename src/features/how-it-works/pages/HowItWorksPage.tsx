@@ -1,42 +1,36 @@
 import { useNavigate } from 'react-router'
 import { Shield, Clock, User } from 'lucide-react'
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
-const CATEGORIES = [
-  'trabalho', 
-  'estudos', 
-  'encontros', 
-  'família', 
-  'eventos'
-];
+const CATEGORIES = ['trabalho', 'estudos', 'encontros', 'família', 'eventos']
 
 const BENEFITS = [
   {
-    title: "Personalização",
-    description: "Desculpas adaptadas ao seu contexto específico.",
-    icon: <Shield className="w-8 h-8" />
+    title: 'Personalização',
+    description: 'Desculpas adaptadas ao seu contexto específico.',
+    icon: <Shield className="w-8 h-8" />,
   },
   {
-    title: "Rapidez",
-    description: "Gere desculpas em segundos para qualquer situação.",
-    icon: <Clock className="w-8 h-8" />
+    title: 'Rapidez',
+    description: 'Gere desculpas em segundos para qualquer situação.',
+    icon: <Clock className="w-8 h-8" />,
   },
   {
-    title: "Confidencialidade",
-    description: "Suas informações são processadas com total privacidade.",
-    icon: <User className="w-8 h-8" />
-  }
-];
+    title: 'Confidencialidade',
+    description: 'Suas informações são processadas com total privacidade.',
+    icon: <User className="w-8 h-8" />,
+  },
+]
 
 export function HowItWorksPage() {
   const navigate = useNavigate()
@@ -46,7 +40,8 @@ export function HowItWorksPage() {
       {/* Hero Section */}
       <section className="text-center max-w-3xl mx-auto py-10 md:py-16">
         <h1 className="text-2xl md:text-4xl mb-4 font-poppins font-semibold">
-          Como funciona o desculp<span className="text-purple-primary">.ai</span>
+          Como funciona o desculp
+          <span className="text-purple-primary">.ai</span>
         </h1>
         <p className="text-base md:text-lg text-gray-medium mb-8 px-4">
           Gere pedidos de desculpa convincentes e personalizadas com IA para
@@ -67,8 +62,8 @@ export function HowItWorksPage() {
                 Escolha uma categoria
               </h2>
               <p className="text-sm md:text-base text-gray-medium mb-4 md:mb-0">
-                Selecione a categoria que melhor descreve sua situação. Cada contexto 
-                requer uma abordagem única.
+                Selecione a categoria que melhor descreve sua situação. Cada
+                contexto requer uma abordagem única.
               </p>
             </div>
             <div className="w-full md:w-64">
@@ -78,10 +73,7 @@ export function HowItWorksPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {CATEGORIES.map((categoria) => (
-                    <SelectItem 
-                      key={categoria} 
-                      value={categoria}
-                    >
+                    <SelectItem key={categoria} value={categoria}>
                       {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
                     </SelectItem>
                   ))}
@@ -102,13 +94,13 @@ export function HowItWorksPage() {
                 Descreva o contexto
               </h2>
               <p className="text-sm md:text-base text-gray-medium mb-4 md:mb-0">
-                Forneça detalhes sobre a situação. Quanto mais específico, 
-                mais personalizada será sua desculpa.
+                Forneça detalhes sobre a situação. Quanto mais específico, mais
+                personalizada será sua desculpa.
               </p>
             </div>
             <div className="w-full md:w-64">
-              <Textarea 
-                placeholder="Descreva brevemente a situação..." 
+              <Textarea
+                placeholder="Descreva brevemente a situação..."
                 className="resize-none"
                 maxLength={500}
               />
@@ -122,9 +114,9 @@ export function HowItWorksPage() {
             Como nossa <span className="text-purple-primary">IA</span> funciona
           </h2>
           <p className="text-sm md:text-base text-gray-medium max-w-2xl mx-auto">
-            Utilizamos processamento de linguagem natural avançado para analisar 
-            seu contexto e gerar uma desculpa personalizada. Nossa IA considera 
-            nuances, tom e especificidades da sua situação para criar uma 
+            Utilizamos processamento de linguagem natural avançado para analisar
+            seu contexto e gerar uma desculpa personalizada. Nossa IA considera
+            nuances, tom e especificidades da sua situação para criar uma
             resposta única e convincente.
           </p>
         </section>
@@ -138,7 +130,7 @@ export function HowItWorksPage() {
                   {benefit.icon}
                 </div>
               </CardHeader>
-              <CardContent className='px-0'>
+              <CardContent className="px-0">
                 <h3 className="font-poppins font-semibold text-base md:text-lg mb-2">
                   {benefit.title}
                 </h3>
@@ -156,10 +148,10 @@ export function HowItWorksPage() {
             Pronto para gerar sua desculpa?
           </h2>
           <p className="text-sm md:text-base text-gray-medium max-w-2xl mx-auto mb-6">
-            Experimente agora mesmo e descubra como é fácil criar desculpas 
+            Experimente agora mesmo e descubra como é fácil criar desculpas
             convincentes para qualquer situação.
           </p>
-          <Button 
+          <Button
             className="bg-purple-primary hover:bg-purple-dark text-white px-6 py-2 md:px-8 md:py-3"
             onClick={() => navigate('/')}
           >
@@ -168,5 +160,5 @@ export function HowItWorksPage() {
         </section>
       </div>
     </div>
-  );
+  )
 }
