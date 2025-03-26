@@ -22,8 +22,8 @@ const registerSchema = z
     nomeBase: z.string().min(3, {
       message: 'O nome deve ter pelo menos 3 caracteres',
     }),
-    senha: z.string().min(4, {
-      message: 'A senha deve ter pelo menos 4 caracteres',
+    senha: z.string().min(6, {
+      message: 'A senha deve ter pelo menos 6 caracteres',
     }),
     confirmSenha: z.string().min(1, {
       message: 'Confirme sua senha',
